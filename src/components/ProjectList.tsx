@@ -7,7 +7,6 @@ import {
     TableHead,
     TableRow,
     Paper,
-    Chip,
     Select,
     MenuItem,
     FormControl,
@@ -21,8 +20,9 @@ import {
     Box,
     Typography,
     TextField,
+    Alert,
 } from '@mui/material';
-import { Project, ProjectStatus, CloudProvider } from '../types/Project';
+import { Project, ProjectStatus } from '../types/Project';
 import ProviderIcon from './ProviderIcon';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -59,6 +59,7 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onStatusChange, onD
     const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
     const [projectToEdit, setProjectToEdit] = useState<{ id: string; name: string } | null>(null);
     const [newProjectName, setNewProjectName] = useState('');
+    const [editError, setEditError] = useState<string | null>(null);
 
     const handleDeleteClick = (projectId: string) => {
         setProjectToDelete(projectId);
@@ -81,6 +82,19 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onStatusChange, onD
 
     const handleEditConfirm = () => {
         if (projectToEdit && newProjectName.trim()) {
+            // Check if the new name already exists (excluding the current project)
+            const nameExists = projects.some(
+                project => 
+                    project.id !== projectToEdit.id && 
+                    project.name.toLowerCase() === newProjectName.trim().toLowerCase()
+            );
+            
+            if (nameExists) {
+                setEditError('Un projet avec ce nom existe déjà');
+                return;
+            }
+            
+            setEditError(null);
             onEditProject(projectToEdit.id, newProjectName.trim());
             setEditDialogOpen(false);
             setProjectToEdit(null);
@@ -247,6 +261,11 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onStatusChange, onD
             >
                 <DialogTitle>Modifier le nom du projet</DialogTitle>
                 <DialogContent>
+                    {editError && (
+                        <Alert severity="error" sx={{ mb: 2 }}>
+                            {editError}
+                        </Alert>
+                    )}
                     <TextField
                         autoFocus
                         margin="dense"
@@ -254,7 +273,11 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onStatusChange, onD
                         type="text"
                         fullWidth
                         value={newProjectName}
-                        onChange={(e) => setNewProjectName(e.target.value)}
+                        onChange={(e) => {
+                            setNewProjectName(e.target.value);
+                            setEditError(null);
+                        }}
+                        error={!!editError}
                     />
                 </DialogContent>
                 <DialogActions>

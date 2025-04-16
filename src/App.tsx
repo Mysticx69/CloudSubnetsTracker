@@ -9,6 +9,8 @@ import {
     Avatar,
     IconButton,
     Tooltip,
+    Snackbar,
+    Alert,
 } from '@mui/material';
 import CloudIcon from '@mui/icons-material/Cloud';
 import AddIcon from '@mui/icons-material/Add';
@@ -16,6 +18,7 @@ import ProjectList from './components/ProjectList';
 import ProjectForm from './components/ProjectForm';
 import { Project, ProjectStatus } from './types/Project';
 import { v4 as uuidv4 } from 'uuid';
+import { api } from './services/api';
 
 const BASE_SUBNET = '10.150';
 
@@ -35,6 +38,7 @@ const App: React.FC = () => {
   });
   const [showForm, setShowForm] = useState(false);
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('Tous');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     localStorage.setItem('projects', JSON.stringify(projects));
@@ -82,14 +86,20 @@ const App: React.FC = () => {
     );
   };
 
-  const handleEditProject = (projectId: string, newName: string) => {
-    setProjects(prevProjects =>
-      prevProjects.map(project =>
-        project.id === projectId
-          ? { ...project, name: newName }
-          : project
-      )
-    );
+  const handleEditProject = async (projectId: string, newName: string) => {
+    try {
+      const updatedProject = await api.updateProject(projectId, { name: newName });
+      setProjects(prevProjects =>
+        prevProjects.map(project =>
+          project.id === projectId
+            ? { ...project, name: newName }
+            : project
+        )
+      );
+    } catch (error) {
+      console.error('Failed to update project:', error);
+      setError(error instanceof Error ? error.message : 'Failed to update project');
+    }
   };
 
   const getStats = () => {
@@ -236,6 +246,17 @@ const App: React.FC = () => {
           </Paper>
         </Paper>
       </Container>
+      
+      <Snackbar 
+        open={!!error} 
+        autoHideDuration={6000} 
+        onClose={() => setError(null)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setError(null)} severity="error" sx={{ width: '100%' }}>
+          {error}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
