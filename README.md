@@ -24,7 +24,7 @@ sudo -u postgres createuser --interactive
 # Set password for the user
 sudo -u postgres psql
 postgres=# \password cloud_user
-# Enter password: reF2mlCP17Y1
+# Enter password: your_super_secret_password
 postgres=# \q
 
 # Create database
@@ -49,7 +49,7 @@ sudo npm install -g pm2
 ```bash
 # Create .env file
 cat > .env << EOL
-DATABASE_URL="postgresql://cloud_user:reF2mlCP17Y1@localhost:5432/cloud_subnets_tracker?schema=public"
+DATABASE_URL="postgresql://cloud_user:your_super_secret_password@localhost:5432/cloud_subnets_tracker?schema=public"
 EOL
 ```
 
@@ -108,7 +108,7 @@ psql -U cloud_user cloud_subnets_tracker < backup.sql
 
 ## Application Features
 - Subnet management in 172.16.x.0/24 range
-- Project status tracking (In Progress, Production, Decommissioned)
+- Project status tracking (In Progress, Running, Decommissioned)
 - Multiple cloud provider support (AWS, OVH, CloudAvenue)
 - Real-time status updates
 - Project filtering by status
