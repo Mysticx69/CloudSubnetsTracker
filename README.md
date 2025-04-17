@@ -1,158 +1,131 @@
 # Cloud Subnets Tracker
 
-A full-stack application for tracking cloud subnets, built with React. The application manages subnet allocation in the 172.16.x.0/24 range.
+A modern web application for tracking and managing cloud infrastructure subnets across different providers. Built with React, TypeScript, and Material-UI.
 
-## Quick Production Deployment Guide
+## Features
 
-### 1. System Requirements
-- Node.js v18 or higher
-- PM2 (for process management)
-- Git
+- 🚀 Create and manage cloud infrastructure projects
+- 🔄 Track project status (In Progress, Running, Decommissioned)
+- 🌐 Support for multiple cloud providers (AWS, OVH, CloudAvenue)
+- 📊 Automatic subnet allocation and management
+- 🎨 Modern, responsive UI with Material-UI components
+- 🔒 Data persistence with JSON file storage
+- ⚡ Real-time status updates
 
-### 2. Application Setup
-```bash
-# Clone repository
-git clone <repository-url>
-cd cloud-subnets-tracker
+## Tech Stack
 
-# Install dependencies
-npm install
+- **Frontend:**
+  - React 18
+  - TypeScript
+  - Material-UI (MUI)
+  - Vite
 
-# Install PM2 globally
-sudo npm install -g pm2
+- **Backend:**
+  - Node.js
+  - Express
+  - PM2 (Process Manager)
+
+## Prerequisites
+
+- Node.js (v16 or higher)
+- npm (v7 or higher)
+- PM2 (for production deployment)
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd cloud-subnets-tracker
+   ```
+
+2. Install dependencies:
+   ```bash
+   # Install frontend dependencies
+   npm install
+
+   # Install backend dependencies
+   cd server
+   npm install
+   cd ..
+   ```
+
+## Development
+
+1. Start the backend server:
+   ```bash
+   cd server
+   npm run dev
+   ```
+
+2. Start the frontend development server:
+   ```bash
+   npm run dev
+   ```
+
+3. Access the application at `http://localhost:5173`
+
+## Production Deployment
+
+1. Build the frontend:
+   ```bash
+   npm run prod:build
+   ```
+
+2. Start the services using PM2:
+   ```bash
+   pm2 start ecosystem.config.js
+   ```
+
+3. Monitor the services:
+   ```bash
+   pm2 monit
+   ```
+
+## Project Structure
+
+```
+cloud-subnets-tracker/
+├── src/                    # Frontend source code
+│   ├── components/         # React components
+│   ├── types/             # TypeScript type definitions
+│   └── App.tsx            # Main application component
+├── server/                 # Backend server code
+│   ├── data.json          # Data storage
+│   └── index.js           # Express server
+├── ecosystem.config.js     # PM2 configuration
+└── package.json           # Project dependencies
 ```
 
-### 3. Build and Deploy
-```bash
-# Prepare production build
-npm run prod:prepare
+## API Endpoints
 
-# Start application with PM2
-pm2 start ecosystem.config.js
+- `GET /api/projects` - Get all projects
+- `POST /api/projects` - Create a new project
+- `PUT /api/projects/:id` - Update a project
+- `DELETE /api/projects/:id` - Delete a project
 
-# Save PM2 configuration
-pm2 save
+## Data Structure
 
-# Setup PM2 startup script
-sudo pm2 startup
+Projects are stored with the following structure:
+```typescript
+interface Project {
+  id: string;              // UUID
+  name: string;            // Project name
+  status: ProjectStatus;   // In Progress | Running | Decommissioned
+  provider: CloudProvider; // AWS | OVH | CloudAvenue
+  subnet: string;          // Automatically allocated subnet (e.g., 172.16.1.0/24)
+  createdAt: Date;         // Creation timestamp
+}
 ```
-
-### 4. Verify Deployment
-```bash
-# Check application status
-pm2 status
-
-# View logs
-pm2 logs cloud-subnets-tracker
-```
-
-## Management Commands
-
-### Application Management
-```bash
-# Restart application
-pm2 restart cloud-subnets-tracker
-
-# Stop application
-pm2 stop cloud-subnets-tracker
-
-# View logs
-pm2 logs cloud-subnets-tracker
-
-# Monitor resources
-pm2 monit
-```
-
-## Application Features
-- Subnet management in 172.16.x.0/24 range
-- Project status tracking (In Progress, Running, Decommissioned)
-- Multiple cloud provider support (AWS, OVH, CloudAvenue)
-- Real-time status updates
-- Project filtering by status
-
-## Troubleshooting
-
-### Common Issues
-
-1. Application Not Starting
-```bash
-# Check PM2 logs
-pm2 logs cloud-subnets-tracker
-
-# Verify environment variables
-pm2 env 0
-```
-
-2. Port Conflicts
-```bash
-# Check if port 3000 is in use
-sudo lsof -i :3000
-
-# Change port in ecosystem.config.js if needed
-```
-
-### Support
-For additional support or to report issues, please create an issue in the repository.
-
-## Security Notes
-- Keep Node.js and dependencies updated
-- Use appropriate firewall rules
-
-## Architecture Overview
-
-### Frontend (React)
-- Built with React and Material-UI
-- TypeScript for type safety
-- Responsive design
-- Real-time updates
-
-## Data Persistence
-
-The application uses browser's localStorage for data persistence with the following characteristics:
-
-### Current Implementation
-- Data is stored in the browser's localStorage
-- Data persists across page refreshes within the same browser
-- Data is not shared between different browsers
-- Data is stored locally on the user's machine
-
-### Project Data Structure
-- `id`: Unique identifier (UUID)
-- `name`: Project name
-- `description`: Project description
-- `status`: Project status (In Progress, Running, Decommissioned)
-- `subnet`: Subnet CIDR block in 172.16.x.0/24 range
-- `createdAt`: Creation timestamp
-
-## Workflow
-
-### Development Workflow
-1. Develop frontend components
-2. Test locally
-3. Deploy to production
-
-### Production Workflow
-1. Code changes are pushed to repository
-2. Build process creates optimized production files
-3. PM2 manages the Node.js process
-4. Application serves static files
-
-## Security
-
-- CORS configured for allowed origins
-- Environment variables for sensitive data
-- PM2 process isolation
-
-## Monitoring
-
-The application can be monitored using:
-- PM2 monitoring tools
-- Application logs
-- System metrics
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
