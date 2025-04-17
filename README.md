@@ -174,26 +174,28 @@ For additional support or to report issues, please create an issue in the reposi
 
 ## Data Persistence
 
-The application uses PostgreSQL for data persistence with the following models:
+The application currently uses browser's localStorage for data persistence with the following characteristics:
 
-### Project Model
+### Current Implementation
+- Data is stored in the browser's localStorage
+- Data persists across page refreshes within the same browser
+- Data is not shared between different browsers
+- Data is stored locally on the user's machine
+
+### Project Data Structure
 - `id`: Unique identifier (UUID)
 - `name`: Project name
 - `description`: Project description
-- `vpcCidr`: VPC CIDR block
-- `status`: Project status (ACTIVE, COMPLETED, ON_HOLD)
+- `status`: Project status (In Progress, Running, Decommissioned)
+- `subnet`: Subnet CIDR block in 172.16.x.0/24 range
 - `createdAt`: Creation timestamp
-- `updatedAt`: Last update timestamp
-- `subnets`: Related subnets (one-to-many relationship)
 
-### Subnet Model
-- `id`: Unique identifier (UUID)
-- `cidr`: Subnet CIDR block
-- `region`: Cloud region
-- `environment`: Environment type (DEV, STAGING, PROD)
-- `projectId`: Related project ID
-- `createdAt`: Creation timestamp
-- `updatedAt`: Last update timestamp
+### Future Improvements
+The application is designed to support PostgreSQL database integration for true cross-browser persistence. This would involve:
+- Moving data storage from localStorage to PostgreSQL
+- Implementing API endpoints for data operations
+- Adding user authentication for secure access
+- Enabling real-time updates across different browsers
 
 ## Workflow
 
