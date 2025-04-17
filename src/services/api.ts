@@ -1,6 +1,7 @@
 import { Project } from '../types/Project';
 
-const API_URL = 'http://localhost:3001/api';
+// Use the domain without port since Nginx handles the routing
+const API_URL = `${window.location.protocol}//${window.location.hostname}/api`;
 
 export const api = {
   // Get all projects

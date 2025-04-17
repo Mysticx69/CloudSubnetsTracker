@@ -1,12 +1,20 @@
 {
   "projects": [
     {
-      "name": "AWS_SAH_VZ",
+      "name": "KPN STAGING",
       "status": "In Progress",
       "provider": "AWS",
-      "id": "5c1e8133-102f-40b5-888c-9dbf5330a594",
+      "id": "bf14e6f3-7339-49b0-8daf-fb732edd9856",
       "subnet": "172.16.1.0/24",
-      "createdAt": "2025-04-17T12:45:46.480Z"
+      "createdAt": "2025-04-17T12:56:52.867Z"
+    },
+    {
+      "name": "KPN PRODUCTION",
+      "status": "In Progress",
+      "provider": "AWS",
+      "id": "d8530d11-7512-4a16-b66e-3d00673514ed",
+      "subnet": "172.16.2.0/24",
+      "createdAt": "2025-04-17T12:56:56.317Z"
     }
   ]
 }
