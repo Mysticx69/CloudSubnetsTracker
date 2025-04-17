@@ -1,5 +1,5 @@
 {
-  "name": "cloud-subnet-tracker",
+  "name": "cloud-subnets-tracker",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -43,10 +43,10 @@
     "server:prod": "node dist/server/index.js",
     "prisma:deploy": "prisma migrate deploy",
     "prod:prepare": "npm run build && npm run build:server && npm run prisma:deploy",
-    "prod:start": "pm2 start dist/server/index.js --name cloud-project-tracker",
-    "prod:stop": "pm2 stop cloud-project-tracker",
-    "prod:restart": "pm2 restart cloud-project-tracker",
-    "prod:logs": "pm2 logs cloud-project-tracker",
+    "prod:start": "pm2 start dist/server/index.js --name cloud-subnets-tracker",
+    "prod:stop": "pm2 stop cloud-subnets-tracker",
+    "prod:restart": "pm2 restart cloud-subnets-tracker",
+    "prod:logs": "pm2 logs cloud-subnets-tracker",
     "lint": "eslint src/**/*.{ts,tsx} --fix",
     "deploy": "npx prisma generate && npx prisma db push"
   },

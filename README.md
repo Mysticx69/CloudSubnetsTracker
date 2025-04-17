@@ -1,6 +1,6 @@
-# Cloud Project Tracker
+# Cloud Subnets Tracker
 
-A full-stack application for tracking cloud projects and their subnets, built with React, Express, and PostgreSQL.
+A full-stack application for tracking cloud subnets, built with React, Express, and PostgreSQL.
 
 ## Architecture Overview
 
@@ -35,7 +35,7 @@ A full-stack application for tracking cloud projects and their subnets, built wi
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd cloud-project-tracker
+cd cloud-subnets-tracker
 ```
 
 2. Install dependencies:
@@ -97,10 +97,10 @@ pm2 status
 pm2 logs
 
 # Restart application
-pm2 restart cloud-project-tracker
+pm2 restart cloud-subnets-tracker
 
 # Stop application
-pm2 stop cloud-project-tracker
+pm2 stop cloud-subnets-tracker
 ```
 
 ## Data Persistence

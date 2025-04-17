@@ -7,12 +7,15 @@ import path from 'path';
 const prisma = new PrismaClient();
 
 // Environment variables
-const PORT = process.env.PORT || 3001;
+const PORT = parseInt(process.env.PORT || '3000', 10);
 const NODE_ENV = process.env.NODE_ENV || 'development';
-const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000', 'https://cloudsubnets.sahrd.io'];
 
 // Initialize Express
 const app = express();
+
+// Trust proxy
+app.set('trust proxy', 1);
 
 // Security middleware
 app.use(cors({
@@ -190,6 +193,6 @@ process.on('SIGTERM', () => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running in ${NODE_ENV} mode on port ${PORT}`);
 }); 

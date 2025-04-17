@@ -1,6 +1,6 @@
 export type CloudProvider = 'AWS' | 'OVH' | 'CloudAvenue';
 
-export type ProjectStatus = 'En cours' | 'Décomissioné' | 'Production';
+export type ProjectStatus = 'In Progress' | 'Decommissioned' | 'Production';
 
 export interface Project {
     id: string;

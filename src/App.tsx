@@ -11,6 +11,7 @@ import {
     Tooltip,
     Snackbar,
     Alert,
+    Button,
 } from '@mui/material';
 import CloudIcon from '@mui/icons-material/Cloud';
 import AddIcon from '@mui/icons-material/Add';
@@ -22,7 +23,7 @@ import { api } from './services/api';
 
 const BASE_SUBNET = '10.150';
 
-type FilterStatus = ProjectStatus | 'Tous';
+type FilterStatus = ProjectStatus | 'All';
 
 const App: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>(() => {
@@ -37,7 +38,7 @@ const App: React.FC = () => {
     return [];
   });
   const [showForm, setShowForm] = useState(false);
-  const [filterStatus, setFilterStatus] = useState<FilterStatus>('Tous');
+  const [filterStatus, setFilterStatus] = useState<FilterStatus>('All');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -105,9 +106,9 @@ const App: React.FC = () => {
   const getStats = () => {
     return {
       total: projects.length,
-      inProgress: projects.filter(p => p.status === 'En cours').length,
+      inProgress: projects.filter(p => p.status === 'In Progress').length,
       production: projects.filter(p => p.status === 'Production').length,
-      decommissioned: projects.filter(p => p.status === 'Décomissioné').length,
+      decommissioned: projects.filter(p => p.status === 'Decommissioned').length,
     };
   };
 
@@ -115,11 +116,24 @@ const App: React.FC = () => {
     setFilterStatus(status);
   };
 
-  const filteredProjects = filterStatus === 'Tous'
+  const filteredProjects = filterStatus === 'All'
     ? projects
     : projects.filter(project => project.status === filterStatus);
 
   const stats = getStats();
+
+  const getStatusColor = (status: ProjectStatus) => {
+    switch (status) {
+      case 'In Progress':
+        return '#ff9800';
+      case 'Decommissioned':
+        return '#f44336';
+      case 'Production':
+        return '#4caf50';
+      default:
+        return '#757575';
+    }
+  };
 
   return (
     <Box sx={{ 
@@ -129,14 +143,16 @@ const App: React.FC = () => {
     }}>
       <Container maxWidth="lg">
         <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-            <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>
-              <CloudIcon />
-            </Avatar>
-            <Typography variant="h4" component="h1" sx={{ flexGrow: 1 }}>
-              Cloud Project Tracker
-            </Typography>
-            <Tooltip title="Ajouter un nouveau projet">
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 4, justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>
+                <CloudIcon />
+              </Avatar>
+              <Typography variant="h4" component="h1" gutterBottom>
+                Cloud Subnets Tracker
+              </Typography>
+            </Box>
+            <Tooltip title="Add a new project">
               <IconButton 
                 color="primary" 
                 onClick={() => setShowForm(true)}
@@ -166,11 +182,11 @@ const App: React.FC = () => {
                   transform: 'scale(1.02)'
                 }
               }}
-              onClick={() => handleFilterClick('Tous')}
+              onClick={() => handleFilterClick('All')}
             >
               <CardHeader
                 title="Total"
-                subheader="Projets"
+                subheader="Projects"
                 avatar={<Avatar sx={{ bgcolor: 'primary.main' }}>{stats.total}</Avatar>}
               />
             </Card>
@@ -184,11 +200,11 @@ const App: React.FC = () => {
                   transform: 'scale(1.02)'
                 }
               }}
-              onClick={() => handleFilterClick('En cours')}
+              onClick={() => handleFilterClick('In Progress')}
             >
               <CardHeader
-                title="En cours"
-                subheader="Projets"
+                title="In Progress"
+                subheader="Projects"
                 avatar={<Avatar sx={{ bgcolor: 'warning.main' }}>{stats.inProgress}</Avatar>}
               />
             </Card>
@@ -206,7 +222,7 @@ const App: React.FC = () => {
             >
               <CardHeader
                 title="Production"
-                subheader="Projets"
+                subheader="Projects"
                 avatar={<Avatar sx={{ bgcolor: 'success.main' }}>{stats.production}</Avatar>}
               />
             </Card>
@@ -220,11 +236,11 @@ const App: React.FC = () => {
                   transform: 'scale(1.02)'
                 }
               }}
-              onClick={() => handleFilterClick('Décomissioné')}
+              onClick={() => handleFilterClick('Decommissioned')}
             >
               <CardHeader
-                title="Décomissionés"
-                subheader="Projets"
+                title="Decommissioned"
+                subheader="Projects"
                 avatar={<Avatar sx={{ bgcolor: 'error.main' }}>{stats.decommissioned}</Avatar>}
               />
             </Card>

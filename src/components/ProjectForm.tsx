@@ -18,16 +18,16 @@ interface ProjectFormProps {
 
 const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, existingProjects }) => {
     const [name, setName] = useState('');
-    const [status, setStatus] = useState<ProjectStatus>('En cours');
+    const [status, setStatus] = useState<ProjectStatus>('In Progress');
     const [provider, setProvider] = useState<CloudProvider>('AWS');
     const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         
-        // Vérification si le projet existe déjà
+        // Check if project already exists
         if (existingProjects.some(p => p.name.toLowerCase() === name.toLowerCase())) {
-            setError('Un projet avec ce nom existe déjà');
+            setError('A project with this name already exists');
             return;
         }
 
@@ -37,9 +37,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, existingProjects })
             provider,
         });
 
-        // Réinitialisation du formulaire
+        // Reset form
         setName('');
-        setStatus('En cours');
+        setStatus('In Progress');
         setProvider('AWS');
         setError(null);
     };
@@ -54,7 +54,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, existingProjects })
             
             <TextField
                 fullWidth
-                label="Nom du projet"
+                label="Project Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -68,9 +68,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, existingProjects })
                     label="Status"
                     onChange={(e) => setStatus(e.target.value as ProjectStatus)}
                 >
-                    <MenuItem value="En cours">En cours</MenuItem>
+                    <MenuItem value="In Progress">In Progress</MenuItem>
                     <MenuItem value="Production">Production</MenuItem>
-                    <MenuItem value="Décomissioné">Décomissioné</MenuItem>
+                    <MenuItem value="Decommissioned">Decommissioned</MenuItem>
                 </Select>
             </FormControl>
 
@@ -92,7 +92,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, existingProjects })
                 variant="contained"
                 fullWidth
             >
-                Ajouter le projet
+                Add Project
             </Button>
         </Box>
     );

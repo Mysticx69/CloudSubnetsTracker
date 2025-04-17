@@ -42,14 +42,14 @@ interface ProjectListProps {
 
 const getStatusColor = (status: ProjectStatus) => {
     switch (status) {
-        case 'En cours':
+        case 'In Progress':
             return '#ffa726'; // Orange
         case 'Production':
-            return '#66bb6a'; // Vert
-        case 'Décomissioné':
-            return '#ef5350'; // Rouge
+            return '#66bb6a'; // Green
+        case 'Decommissioned':
+            return '#ef5350'; // Red
         default:
-            return '#9e9e9e'; // Gris
+            return '#9e9e9e'; // Gray
     }
 };
 
@@ -90,7 +90,7 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onStatusChange, onD
             );
             
             if (nameExists) {
-                setEditError('Un projet avec ce nom existe déjà');
+                setEditError('A project with this name already exists');
                 return;
             }
             
@@ -123,7 +123,7 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onStatusChange, onD
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                     <FolderIcon sx={{ color: '#2196f3' }} />
                                     <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                        Nom du Projet
+                                        Project Name
                                     </Typography>
                                 </Box>
                             </TableCell>
@@ -155,7 +155,7 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onStatusChange, onD
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                     <CalendarMonthIcon sx={{ color: '#f44336' }} />
                                     <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                        Date de création
+                                        Creation Date
                                     </Typography>
                                 </Box>
                             </TableCell>
@@ -188,9 +188,9 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onStatusChange, onD
                                                 }
                                             }}
                                         >
-                                            <MenuItem value="En cours" sx={{ color: 'black' }}>En cours</MenuItem>
+                                            <MenuItem value="In Progress" sx={{ color: 'black' }}>In Progress</MenuItem>
                                             <MenuItem value="Production" sx={{ color: 'black' }}>Production</MenuItem>
-                                            <MenuItem value="Décomissioné" sx={{ color: 'black' }}>Décomissioné</MenuItem>
+                                            <MenuItem value="Decommissioned" sx={{ color: 'black' }}>Decommissioned</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </TableCell>
@@ -207,7 +207,7 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onStatusChange, onD
                                     <IconButton 
                                         color="primary" 
                                         onClick={() => handleEditClick(project.id, project.name)}
-                                        title="Modifier le projet"
+                                        title="Edit Project"
                                         sx={{
                                             '&:hover': {
                                                 backgroundColor: 'rgba(33, 150, 243, 0.1)',
@@ -219,7 +219,7 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onStatusChange, onD
                                     <IconButton 
                                         color="error" 
                                         onClick={() => handleDeleteClick(project.id)}
-                                        title="Supprimer le projet"
+                                        title="Delete Project"
                                         sx={{
                                             '&:hover': {
                                                 backgroundColor: 'rgba(244, 67, 54, 0.1)',
@@ -239,18 +239,18 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onStatusChange, onD
                 open={deleteDialogOpen}
                 onClose={handleDeleteCancel}
             >
-                <DialogTitle>Confirmer la suppression</DialogTitle>
+                <DialogTitle>Confirm Deletion</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Êtes-vous sûr de vouloir supprimer ce projet ? Cette action est irréversible.
+                        Are you sure you want to delete this project? This action cannot be undone.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDeleteCancel} color="primary">
-                        Annuler
+                        Cancel
                     </Button>
                     <Button onClick={handleDeleteConfirm} color="error" autoFocus>
-                        Supprimer
+                        Delete
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -259,17 +259,20 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onStatusChange, onD
                 open={editDialogOpen}
                 onClose={handleEditCancel}
             >
-                <DialogTitle>Modifier le nom du projet</DialogTitle>
+                <DialogTitle>Edit Project</DialogTitle>
                 <DialogContent>
                     {editError && (
                         <Alert severity="error" sx={{ mb: 2 }}>
                             {editError}
                         </Alert>
                     )}
+                    <DialogContentText>
+                        {editError || 'Enter a new name for the project.'}
+                    </DialogContentText>
                     <TextField
                         autoFocus
                         margin="dense"
-                        label="Nouveau nom"
+                        label="New Name"
                         type="text"
                         fullWidth
                         value={newProjectName}
@@ -282,7 +285,7 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onStatusChange, onD
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleEditCancel} color="primary">
-                        Annuler
+                        Cancel
                     </Button>
                     <Button 
                         onClick={handleEditConfirm} 
@@ -290,7 +293,7 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onStatusChange, onD
                         autoFocus
                         disabled={!newProjectName.trim()}
                     >
-                        Enregistrer
+                        Save
                     </Button>
                 </DialogActions>
             </Dialog>
