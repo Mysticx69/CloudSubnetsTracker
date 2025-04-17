@@ -19,7 +19,6 @@ import ProjectList from './components/ProjectList';
 import ProjectForm from './components/ProjectForm';
 import { Project, ProjectStatus } from './types/Project';
 import { v4 as uuidv4 } from 'uuid';
-import { api } from './services/api';
 
 const BASE_SUBNET = '172.16';
 
@@ -87,20 +86,14 @@ const App: React.FC = () => {
     );
   };
 
-  const handleEditProject = async (projectId: string, newName: string) => {
-    try {
-      const updatedProject = await api.updateProject(projectId, { name: newName });
-      setProjects(prevProjects =>
-        prevProjects.map(project =>
-          project.id === projectId
-            ? { ...project, name: newName }
-            : project
-        )
-      );
-    } catch (error) {
-      console.error('Failed to update project:', error);
-      setError(error instanceof Error ? error.message : 'Failed to update project');
-    }
+  const handleEditProject = (projectId: string, newName: string) => {
+    setProjects(prevProjects =>
+      prevProjects.map(project =>
+        project.id === projectId
+          ? { ...project, name: newName }
+          : project
+      )
+    );
   };
 
   const getStats = () => {
