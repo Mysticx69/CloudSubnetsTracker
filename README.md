@@ -1,6 +1,156 @@
 # Cloud Subnets Tracker
 
-A full-stack application for tracking cloud subnets, built with React, Express, and PostgreSQL.
+A full-stack application for tracking cloud subnets, built with React, Express, and PostgreSQL. The application manages subnet allocation in the 172.16.x.0/24 range.
+
+## Quick Production Deployment Guide
+
+### 1. System Requirements
+- Node.js v18 or higher
+- PostgreSQL 12 or higher
+- PM2 (for process management)
+- Git
+
+### 2. PostgreSQL Setup
+```bash
+# Install PostgreSQL if not already installed
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+
+# Create database user
+sudo -u postgres createuser --interactive
+# Enter name: cloud_user
+# Make as superuser: yes
+
+# Set password for the user
+sudo -u postgres psql
+postgres=# \password cloud_user
+# Enter password: reF2mlCP17Y1
+postgres=# \q
+
+# Create database
+sudo -u postgres createdb cloud_subnets_tracker
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE cloud_subnets_tracker TO cloud_user;"
+```
+
+### 3. Application Setup
+```bash
+# Clone repository
+git clone <repository-url>
+cd cloud-subnets-tracker
+
+# Install dependencies
+npm install
+
+# Install PM2 globally
+sudo npm install -g pm2
+```
+
+### 4. Environment Configuration
+```bash
+# Create .env file
+cat > .env << EOL
+DATABASE_URL="postgresql://cloud_user:reF2mlCP17Y1@localhost:5432/cloud_subnets_tracker?schema=public"
+EOL
+```
+
+### 5. Build and Deploy
+```bash
+# Prepare production build
+npm run prod:prepare
+
+# Start application with PM2
+pm2 start ecosystem.config.js
+
+# Save PM2 configuration
+pm2 save
+
+# Setup PM2 startup script
+sudo pm2 startup
+```
+
+### 6. Verify Deployment
+```bash
+# Check application status
+pm2 status
+
+# View logs
+pm2 logs cloud-subnets-tracker
+```
+
+## Management Commands
+
+### Application Management
+```bash
+# Restart application
+pm2 restart cloud-subnets-tracker
+
+# Stop application
+pm2 stop cloud-subnets-tracker
+
+# View logs
+pm2 logs cloud-subnets-tracker
+
+# Monitor resources
+pm2 monit
+```
+
+### Database Management
+```bash
+# Connect to database
+psql -U cloud_user -d cloud_subnets_tracker
+
+# Backup database
+pg_dump -U cloud_user cloud_subnets_tracker > backup.sql
+
+# Restore database
+psql -U cloud_user cloud_subnets_tracker < backup.sql
+```
+
+## Application Features
+- Subnet management in 172.16.x.0/24 range
+- Project status tracking (In Progress, Production, Decommissioned)
+- Multiple cloud provider support (AWS, OVH, CloudAvenue)
+- Real-time status updates
+- Project filtering by status
+
+## Troubleshooting
+
+### Common Issues
+
+1. Database Connection Issues
+```bash
+# Check PostgreSQL status
+sudo systemctl status postgresql
+
+# Check database connection
+psql -U cloud_user -d cloud_subnets_tracker -c "\conninfo"
+```
+
+2. Application Not Starting
+```bash
+# Check PM2 logs
+pm2 logs cloud-subnets-tracker
+
+# Verify environment variables
+pm2 env 0
+```
+
+3. Port Conflicts
+```bash
+# Check if port 3000 is in use
+sudo lsof -i :3000
+
+# Change port in ecosystem.config.js if needed
+```
+
+### Support
+For additional support or to report issues, please create an issue in the repository.
+
+## Security Notes
+- Always change default database passwords in production
+- Use appropriate firewall rules
+- Keep Node.js and dependencies updated
+- Regularly backup the database
 
 ## Architecture Overview
 
@@ -21,87 +171,6 @@ A full-stack application for tracking cloud subnets, built with React, Express, 
 - PostgreSQL for data persistence
 - Automatic migrations
 - Data validation
-
-## Production Setup
-
-### Prerequisites
-- Node.js (v18 or higher)
-- PostgreSQL
-- PM2 (for process management)
-- Nginx (optional, for reverse proxy)
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd cloud-subnets-tracker
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Set up environment variables:
-```bash
-cp .env.example .env
-cp .env.example .env.production
-```
-
-4. Configure database:
-```bash
-# Update DATABASE_URL in .env.production
-DATABASE_URL="postgresql://user:password@localhost:5432/cloud_project_tracker?schema=public"
-```
-
-5. Deploy database schema:
-```bash
-npm run prisma:deploy
-```
-
-### Production Deployment
-
-1. Build the application:
-```bash
-npm run prod:prepare
-```
-
-2. Set up PM2:
-```bash
-sudo npm install -g pm2
-sudo pm2 startup
-pm2 start ecosystem.config.js --env production
-pm2 save
-```
-
-3. Verify the application is running:
-```bash
-pm2 status
-```
-
-### Process Management
-
-The application runs under PM2 with the following configuration:
-- Single instance mode (can be scaled to cluster mode)
-- Auto-restart on crashes
-- Memory limit of 1GB
-- Production environment variables
-
-To manage the application:
-```bash
-# View status
-pm2 status
-
-# View logs
-pm2 logs
-
-# Restart application
-pm2 restart cloud-subnets-tracker
-
-# Stop application
-pm2 stop cloud-subnets-tracker
-```
 
 ## Data Persistence
 
@@ -164,24 +233,6 @@ The application can be monitored using:
 - Database logs
 - Application logs
 - System metrics
-
-## Troubleshooting
-
-Common issues and solutions:
-1. Database connection issues
-   - Check DATABASE_URL in .env.production
-   - Verify PostgreSQL is running
-   - Check network connectivity
-
-2. Application crashes
-   - Check PM2 logs: `pm2 logs`
-   - Verify memory limits
-   - Check for database errors
-
-3. Build issues
-   - Clear node_modules and reinstall
-   - Check TypeScript version compatibility
-   - Verify all dependencies are installed
 
 ## Contributing
 

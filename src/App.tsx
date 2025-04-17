@@ -21,7 +21,7 @@ import { Project, ProjectStatus } from './types/Project';
 import { v4 as uuidv4 } from 'uuid';
 import { api } from './services/api';
 
-const BASE_SUBNET = '10.150';
+const BASE_SUBNET = '172.16';
 
 type FilterStatus = ProjectStatus | 'All';
 
@@ -51,7 +51,7 @@ const App: React.FC = () => {
     }
 
     const usedSubnets = projects.map(p => {
-      const match = p.subnet.match(/10\.150\.(\d+)\.0\/24/);
+      const match = p.subnet.match(/172\.16\.(\d+)\.0\/24/);
       return match ? parseInt(match[1]) : 0;
     });
 
