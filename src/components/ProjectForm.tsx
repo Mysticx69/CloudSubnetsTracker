@@ -69,7 +69,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, existingProjects })
                     onChange={(e) => setStatus(e.target.value as ProjectStatus)}
                 >
                     <MenuItem value="In Progress">In Progress</MenuItem>
-                    <MenuItem value="Production">Production</MenuItem>
+                    <MenuItem value="Running">Running</MenuItem>
                     <MenuItem value="Decommissioned">Decommissioned</MenuItem>
                 </Select>
             </FormControl>

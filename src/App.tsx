@@ -107,7 +107,7 @@ const App: React.FC = () => {
     return {
       total: projects.length,
       inProgress: projects.filter(p => p.status === 'In Progress').length,
-      production: projects.filter(p => p.status === 'Production').length,
+      running: projects.filter(p => p.status === 'Running').length,
       decommissioned: projects.filter(p => p.status === 'Decommissioned').length,
     };
   };
@@ -128,7 +128,7 @@ const App: React.FC = () => {
         return '#ff9800';
       case 'Decommissioned':
         return '#f44336';
-      case 'Production':
+      case 'Running':
         return '#4caf50';
       default:
         return '#757575';
@@ -218,12 +218,12 @@ const App: React.FC = () => {
                   transform: 'scale(1.02)'
                 }
               }}
-              onClick={() => handleFilterClick('Production')}
+              onClick={() => handleFilterClick('Running')}
             >
               <CardHeader
-                title="Production"
+                title="Running"
                 subheader="Projects"
-                avatar={<Avatar sx={{ bgcolor: 'success.main' }}>{stats.production}</Avatar>}
+                avatar={<Avatar sx={{ bgcolor: 'success.main' }}>{stats.running}</Avatar>}
               />
             </Card>
             <Card 

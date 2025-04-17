@@ -44,7 +44,7 @@ const getStatusColor = (status: ProjectStatus) => {
     switch (status) {
         case 'In Progress':
             return '#ffa726'; // Orange
-        case 'Production':
+        case 'Running':
             return '#66bb6a'; // Green
         case 'Decommissioned':
             return '#ef5350'; // Red
@@ -189,7 +189,7 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onStatusChange, onD
                                             }}
                                         >
                                             <MenuItem value="In Progress" sx={{ color: 'black' }}>In Progress</MenuItem>
-                                            <MenuItem value="Production" sx={{ color: 'black' }}>Production</MenuItem>
+                                            <MenuItem value="Running" sx={{ color: 'black' }}>Running</MenuItem>
                                             <MenuItem value="Decommissioned" sx={{ color: 'black' }}>Decommissioned</MenuItem>
                                         </Select>
                                     </FormControl>
