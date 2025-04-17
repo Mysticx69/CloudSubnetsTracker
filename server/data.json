@@ -1,0 +1,12 @@
+{
+  "projects": [
+    {
+      "name": "AWS_SAH_VZ",
+      "status": "In Progress",
+      "provider": "AWS",
+      "id": "5c1e8133-102f-40b5-888c-9dbf5330a594",
+      "subnet": "172.16.1.0/24",
+      "createdAt": "2025-04-17T12:45:46.480Z"
+    }
+  ]
+}

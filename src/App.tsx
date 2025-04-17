@@ -12,6 +12,7 @@ import {
     Snackbar,
     Alert,
     Button,
+    CircularProgress,
 } from '@mui/material';
 import CloudIcon from '@mui/icons-material/Cloud';
 import AddIcon from '@mui/icons-material/Add';
@@ -19,30 +20,39 @@ import ProjectList from './components/ProjectList';
 import ProjectForm from './components/ProjectForm';
 import { Project, ProjectStatus } from './types/Project';
 import { v4 as uuidv4 } from 'uuid';
+import { api } from './services/api';
 
 const BASE_SUBNET = '172.16';
 
 type FilterStatus = ProjectStatus | 'All';
 
 const App: React.FC = () => {
-  const [projects, setProjects] = useState<Project[]>(() => {
-    const savedProjects = localStorage.getItem('projects');
-    if (savedProjects) {
-      const parsedProjects = JSON.parse(savedProjects);
-      return parsedProjects.map((project: any) => ({
-        ...project,
-        createdAt: new Date(project.createdAt)
-      }));
-    }
-    return [];
-  });
+  const [projects, setProjects] = useState<Project[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('All');
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch projects from API on component mount
   useEffect(() => {
-    localStorage.setItem('projects', JSON.stringify(projects));
-  }, [projects]);
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        const data = await api.getProjects();
+        setProjects(data.map(project => ({
+          ...project,
+          createdAt: new Date(project.createdAt)
+        })));
+      } catch (err) {
+        setError('Failed to load projects. Please try again later.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   const getNextSubnet = () => {
     if (projects.length === 0) {
@@ -58,42 +68,82 @@ const App: React.FC = () => {
     return `${BASE_SUBNET}.${maxSubnet + 1}.0/24`;
   };
 
-  const handleAddProject = (projectData: Omit<Project, 'id' | 'subnet' | 'createdAt'>) => {
-    const newProject: Project = {
-      ...projectData,
-      id: uuidv4(),
-      subnet: getNextSubnet(),
-      createdAt: new Date(),
-    };
-
-    setProjects([...projects, newProject]);
-    setShowForm(false);
+  const handleAddProject = async (projectData: Omit<Project, 'id' | 'subnet' | 'createdAt'>) => {
+    try {
+      const savedProject = await api.addProject(projectData);
+      
+      if (savedProject) {
+        setProjects(prev => [...prev, {
+          ...savedProject,
+          createdAt: new Date(savedProject.createdAt)
+        }]);
+        setShowForm(false);
+      } else {
+        setError('Failed to add project. Please try again.');
+      }
+    } catch (err) {
+      setError('Failed to add project. Please try again.');
+      console.error(err);
+    }
   };
 
-  const handleStatusChange = (projectId: string, newStatus: ProjectStatus) => {
-    setProjects(prevProjects =>
-      prevProjects.map(project =>
-        project.id === projectId
-          ? { ...project, status: newStatus }
-          : project
-      )
-    );
+  const handleStatusChange = async (projectId: string, newStatus: ProjectStatus) => {
+    try {
+      const updatedProject = await api.updateProject(projectId, { status: newStatus });
+      
+      if (updatedProject) {
+        setProjects(prevProjects =>
+          prevProjects.map(project =>
+            project.id === projectId
+              ? { ...project, status: newStatus }
+              : project
+          )
+        );
+      } else {
+        setError('Failed to update project status. Please try again.');
+      }
+    } catch (err) {
+      setError('Failed to update project status. Please try again.');
+      console.error(err);
+    }
   };
 
-  const handleDeleteProject = (projectId: string) => {
-    setProjects(prevProjects =>
-      prevProjects.filter(project => project.id !== projectId)
-    );
+  const handleDeleteProject = async (projectId: string) => {
+    try {
+      const success = await api.deleteProject(projectId);
+      
+      if (success) {
+        setProjects(prevProjects =>
+          prevProjects.filter(project => project.id !== projectId)
+        );
+      } else {
+        setError('Failed to delete project. Please try again.');
+      }
+    } catch (err) {
+      setError('Failed to delete project. Please try again.');
+      console.error(err);
+    }
   };
 
-  const handleEditProject = (projectId: string, newName: string) => {
-    setProjects(prevProjects =>
-      prevProjects.map(project =>
-        project.id === projectId
-          ? { ...project, name: newName }
-          : project
-      )
-    );
+  const handleEditProject = async (projectId: string, newName: string) => {
+    try {
+      const updatedProject = await api.updateProject(projectId, { name: newName });
+      
+      if (updatedProject) {
+        setProjects(prevProjects =>
+          prevProjects.map(project =>
+            project.id === projectId
+              ? { ...project, name: newName }
+              : project
+          )
+        );
+      } else {
+        setError('Failed to update project name. Please try again.');
+      }
+    } catch (err) {
+      setError('Failed to update project name. Please try again.');
+      console.error(err);
+    }
   };
 
   const getStats = () => {
@@ -246,12 +296,18 @@ const App: React.FC = () => {
           )}
           
           <Paper elevation={2} sx={{ borderRadius: 2 }}>
-            <ProjectList 
-              projects={filteredProjects} 
-              onStatusChange={handleStatusChange}
-              onDeleteProject={handleDeleteProject}
-              onEditProject={handleEditProject}
-            />
+            {loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              <ProjectList 
+                projects={filteredProjects} 
+                onStatusChange={handleStatusChange}
+                onDeleteProject={handleDeleteProject}
+                onEditProject={handleEditProject}
+              />
+            )}
           </Paper>
         </Paper>
       </Container>

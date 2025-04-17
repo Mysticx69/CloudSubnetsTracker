@@ -25,14 +25,20 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, existingProjects })
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         
+        // Validate name
+        if (!name.trim()) {
+            setError('Project name is required');
+            return;
+        }
+        
         // Check if project already exists
-        if (existingProjects.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+        if (existingProjects.some(p => p.name.toLowerCase() === name.trim().toLowerCase())) {
             setError('A project with this name already exists');
             return;
         }
 
         onSubmit({
-            name,
+            name: name.trim(),
             status,
             provider,
         });
@@ -42,6 +48,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, existingProjects })
         setStatus('In Progress');
         setProvider('AWS');
         setError(null);
+    };
+
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setName(e.target.value);
+        setError(null); // Clear error when user types
     };
 
     return (
@@ -56,7 +67,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, existingProjects })
                 fullWidth
                 label="Project Name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={handleNameChange}
+                error={!!error}
+                helperText={error || ''}
                 required
                 sx={{ mb: 2 }}
             />
@@ -91,6 +104,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, existingProjects })
                 type="submit"
                 variant="contained"
                 fullWidth
+                disabled={!name.trim()}
             >
                 Add Project
             </Button>
