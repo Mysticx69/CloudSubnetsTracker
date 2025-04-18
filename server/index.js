@@ -1,12 +1,19 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const DATA_FILE = path.join(__dirname, 'data.json');
+const S3_BUCKET = process.env.S3_BUCKET || 'cloud-subnets-tracker-backup';
+const S3_KEY = 'data.json';
+
+// Initialize S3 client
+const s3Client = new S3Client({ region: process.env.AWS_REGION || 'eu-west-3' });
 
 // Middleware
 app.use(cors({
@@ -32,10 +39,33 @@ const readData = () => {
   }
 };
 
-// Helper function to write data
-const writeData = (data) => {
+// Function to backup data to S3
+const backupToS3 = async (data) => {
   try {
+    const command = new PutObjectCommand({
+      Bucket: S3_BUCKET,
+      Key: S3_KEY,
+      Body: JSON.stringify(data, null, 2),
+      ContentType: 'application/json'
+    });
+    await s3Client.send(command);
+    console.log('Successfully backed up data to S3');
+    return true;
+  } catch (error) {
+    console.error('Error backing up to S3:', error);
+    return false;
+  }
+};
+
+// Helper function to write data
+const writeData = async (data) => {
+  try {
+    // Write to local file
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+    
+    // Backup to S3
+    await backupToS3(data);
+    
     return true;
   } catch (error) {
     console.error('Error writing data:', error);
@@ -65,7 +95,7 @@ app.get('/api/projects', (req, res) => {
   res.json(data.projects);
 });
 
-app.post('/api/projects', (req, res) => {
+app.post('/api/projects', async (req, res) => {
   const data = readData();
   const newProject = {
     ...req.body,
@@ -78,14 +108,14 @@ app.post('/api/projects', (req, res) => {
   data.projects.push(newProject);
   
   // Save the updated data
-  if (writeData(data)) {
+  if (await writeData(data)) {
     res.status(201).json(newProject);
   } else {
     res.status(500).json({ error: 'Failed to save project' });
   }
 });
 
-app.put('/api/projects/:id', (req, res) => {
+app.put('/api/projects/:id', async (req, res) => {
   const data = readData();
   const { id } = req.params;
   const updatedProject = req.body;
@@ -96,13 +126,13 @@ app.put('/api/projects/:id', (req, res) => {
     data.projects[index] = { 
       ...data.projects[index], 
       ...updatedProject,
-      id: data.projects[index].id, // Ensure ID doesn't change
-      subnet: data.projects[index].subnet, // Ensure subnet doesn't change
-      createdAt: data.projects[index].createdAt // Ensure createdAt doesn't change
+      id: data.projects[index].id,
+      subnet: data.projects[index].subnet,
+      createdAt: data.projects[index].createdAt
     };
     
     // Save the updated data
-    if (writeData(data)) {
+    if (await writeData(data)) {
       res.json(data.projects[index]);
     } else {
       res.status(500).json({ error: 'Failed to update project' });
@@ -112,7 +142,7 @@ app.put('/api/projects/:id', (req, res) => {
   }
 });
 
-app.delete('/api/projects/:id', (req, res) => {
+app.delete('/api/projects/:id', async (req, res) => {
   const data = readData();
   const { id } = req.params;
   
@@ -122,7 +152,7 @@ app.delete('/api/projects/:id', (req, res) => {
     data.projects.splice(index, 1);
     
     // Save the updated data
-    if (writeData(data)) {
+    if (await writeData(data)) {
       res.status(204).send();
     } else {
       res.status(500).json({ error: 'Failed to delete project' });

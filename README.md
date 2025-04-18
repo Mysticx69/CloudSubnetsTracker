@@ -9,8 +9,10 @@ A modern web application for tracking and managing cloud infrastructure subnets 
 - 🌐 Support for multiple cloud providers (AWS, OVH, CloudAvenue)
 - 📊 Automatic subnet allocation and management
 - 🎨 Modern, responsive UI with Material-UI components
-- 🔒 Data persistence with JSON file storage
+- 💾 Data persistence with JSON file storage
 - ⚡ Real-time status updates
+- 🔒 Automatic S3 backup with versioning
+- 📈 Lifecycle management for backups
 
 ## Tech Stack
 
@@ -24,12 +26,18 @@ A modern web application for tracking and managing cloud infrastructure subnets 
   - Node.js
   - Express
   - PM2 (Process Manager)
+  - AWS SDK v3
+
+- **Infrastructure:**
+  - AWS S3 for backups
+  - IAM roles for secure access
 
 ## Prerequisites
 
 - Node.js (v16 or higher)
 - npm (v7 or higher)
 - PM2 (for production deployment)
+- AWS account with S3 access
 
 ## Installation
 
@@ -91,7 +99,7 @@ cloud-subnets-tracker/
 │   ├── types/             # TypeScript type definitions
 │   └── App.tsx            # Main application component
 ├── server/                 # Backend server code
-│   ├── data.json          # Data storage
+│   ├── data.json          # Local data storage
 │   └── index.js           # Express server
 ├── ecosystem.config.js     # PM2 configuration
 └── package.json           # Project dependencies
@@ -117,6 +125,28 @@ interface Project {
   createdAt: Date;         // Creation timestamp
 }
 ```
+
+## Backup System
+
+The application automatically backs up data to S3 with the following features:
+
+- 🔄 Automatic backup on every write operation
+- 📦 Versioning enabled for data recovery
+- 🔒 Server-side encryption (AES256)
+- 💾 Lifecycle management:
+  - Move to STANDARD_IA after 7 days
+  - Delete versions after 30 days
+- 🛡️ Secure access through IAM roles
+
+## Environment Variables
+
+### Backend
+- `PORT` - Server port (default: 3001)
+- `AWS_REGION` - AWS region for S3 (default: eu-west-3)
+- `S3_BUCKET` - S3 bucket name for backups
+
+### Frontend
+- `PORT` - Frontend port (default: 3000)
 
 ## Contributing
 

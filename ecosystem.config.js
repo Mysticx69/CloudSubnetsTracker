@@ -19,7 +19,9 @@ module.exports = {
       args: 'server/index.js',
       env: {
         NODE_ENV: 'production',
-        PORT: 3001
+        PORT: 3001,
+        AWS_REGION: 'eu-west-3',
+        S3_BUCKET: 'cloud-subnets-tracker-backup'
       },
       watch: false,
       instances: 1,
